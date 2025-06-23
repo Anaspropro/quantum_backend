@@ -1,0 +1,17 @@
+from django.shortcuts import render
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+# Ensure serializers.py exists in the same directory, or update the import path if needed
+from .serializers import QuantumSimulateSerializer
+from .quantum_core import run_quantum_circuit
+
+class QuantumSimulateView(APIView):
+    def post(self, request):
+        serializer = QuantumSimulateSerializer(data=request.data)
+        if serializer.is_valid():
+            num_qubits = serializer.validated_data['numQubits']
+            circuit = serializer.validated_data['circuit']
+            result = run_quantum_circuit(num_qubits, circuit)
+            return Response({'result': result})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
