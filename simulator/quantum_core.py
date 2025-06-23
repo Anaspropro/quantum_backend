@@ -21,11 +21,8 @@ def run_quantum_circuit(num_qubits, circuit_ops, return_statevector=False):
     job = backend.run(tqc, shots=1)
     result = job.result()
     counts = result.get_counts(qc)
-
-
     statevector = None
     if return_statevector:
-        # Remove measurements for statevector simulation
         qc_sv = qc.remove_final_measurements(inplace=False)
         statevector = Statevector.from_instruction(qc_sv)
     return {'counts': counts, 'statevector': statevector} if return_statevector else counts
