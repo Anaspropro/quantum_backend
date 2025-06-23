@@ -2,9 +2,8 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-# Ensure serializers.py exists in the same directory, or update the import path if needed
 from .serializers import QuantumSimulateSerializer
-from .quantum_core import run_quantum_circuit
+from .quantum_core import run_quantum_circuit, build_quantum_circuit  # <-- add build_quantum_circuit
 
 class QuantumSimulateView(APIView):
     def post(self, request):
@@ -14,7 +13,10 @@ class QuantumSimulateView(APIView):
             circuit = serializer.validated_data['circuit']
             try:
                 result = run_quantum_circuit(num_qubits, circuit)
-                return Response({'result': result})
+                # Build the circuit again to get QASM
+                qc = build_quantum_circuit(num_qubits, circuit)
+                qasm = qc.qasm()
+                return Response({'result': result, 'qasm': qasm})
             except Exception as e:
                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
