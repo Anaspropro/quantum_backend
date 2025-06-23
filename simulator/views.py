@@ -12,6 +12,9 @@ class QuantumSimulateView(APIView):
         if serializer.is_valid():
             num_qubits = serializer.validated_data['numQubits']
             circuit = serializer.validated_data['circuit']
-            result = run_quantum_circuit(num_qubits, circuit)
-            return Response({'result': result})
+            try:
+                result = run_quantum_circuit(num_qubits, circuit)
+                return Response({'result': result})
+            except Exception as e:
+                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
