@@ -13,12 +13,7 @@ class QuantumSimulateView(APIView):
             circuit = serializer.validated_data['circuit']
             try:
                 result = run_quantum_circuit(num_qubits, circuit)
-                qc = build_quantum_circuit(num_qubits, circuit)
-                try:
-                    qasm = qc.qasm()
-                except AttributeError:
-                    qasm = "QASM export not supported in this Qiskit version."
-                return Response({'result': result, 'qasm': qasm})
+                return Response({'result': result})
             except Exception as e:
                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
