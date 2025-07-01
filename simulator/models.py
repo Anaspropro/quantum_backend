@@ -1,13 +1,12 @@
-from django.contrib.auth.models import User
 from django.db import models
 
-class UserActivity(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    action = models.CharField(max_length=255)
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-class SimulationHistory(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    circuit_data = models.JSONField()
-    result_data = models.JSONField()
+class Circuit(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+class Simulation(models.Model):
+    circuit = models.ForeignKey(Circuit, on_delete=models.CASCADE)
+    input_data = models.JSONField()
+    output_data = models.JSONField()
+    simulated_at = models.DateTimeField(auto_now_add=True)
